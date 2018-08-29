@@ -3,7 +3,9 @@
 /* @var $this yii\web\View */
 
 $this->title = 'My Yii Application';
+print_r($_SESSION);
 ?>
+<?= \common\modules\chat\widgets\Chat::widget();?>
 <div class="site-index">
 
     <div class="jumbotron">

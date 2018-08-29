@@ -6,10 +6,13 @@ return [
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
-        'cache' => [
-            'class' => 'yii\caching\FileCache',
+        'chat' => [
+            'class' => 'common\modules\chat\Module',
         ],
-
-
+    ],
+    'modules' => [
+        'chat' => [
+            'class' => 'common\modules\chat\Module',
+        ],
     ],
 ];
