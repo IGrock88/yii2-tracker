@@ -22,6 +22,7 @@
     };
     $('#sendMessage').on('click', function () {
         sendMessage();
+        $('#messageInput').focus();
     });
 
     $('#messageInput').on('keydown', function (e) {
