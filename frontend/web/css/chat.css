@@ -1,0 +1,19 @@
+.chatPane{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.area_chat{
+    resize: none;
+}
+
+.chatPane__area{
+    padding: 5px;
+    min-height: 300px;
+}
+
+.chatPane__input{
+    padding: 5px;
+}
