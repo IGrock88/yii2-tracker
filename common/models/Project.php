@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "project".
@@ -10,6 +12,7 @@ use Yii;
  * @property int $id
  * @property string $title
  * @property string $description
+ * @property boolean $active
  * @property int $created_by
  * @property int $updated_by
  * @property int $created_at
@@ -32,6 +35,17 @@ class Project extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className(),
+            BlameableBehavior::className()
+        ];
+    }
+    /**
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
@@ -41,6 +55,7 @@ class Project extends \yii\db\ActiveRecord
             [['title'], 'string', 'max' => 255],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
+            [['active']]
         ];
     }
 

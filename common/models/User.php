@@ -23,8 +23,12 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+    private $_password;
+
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
+    const SCENARIO_ADMIN_CREATE = 'user_create';
+    const SCENARIO_ADMIN_UPDATE = 'user_update';
 
 
     /**
@@ -45,6 +49,18 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    public function beforeSave($insert)
+    {
+        if(!parent::beforeSave($insert)){
+            return false;
+        }
+
+        if($this->isNewRecord){
+            $this->generateAuthKey();
+        }
+        return true;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -53,6 +69,11 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['email', 'email'],
+            [['username', 'email'], 'unique'],
+            [['', 'auth_key'], 'safe'],
+            [['password', 'username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_CREATE],
+            [['username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_UPDATE]
         ];
     }
 
@@ -154,6 +175,15 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     *
+     * @param string $password
+     */
+    public function getPassword()
+    {
+        return $this->_password;
+    }
+
+    /**
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
@@ -161,6 +191,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function setPassword($password)
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->_password = $password;
     }
 
     /**

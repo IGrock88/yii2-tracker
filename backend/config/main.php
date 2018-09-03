@@ -48,6 +48,8 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '<c:[\w-]+>/<id:\d+>' => '<c>/view',
+                '<c:>s' => '<c>/index'
             ],
         ],
 

@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "task".
@@ -11,6 +13,7 @@ use Yii;
  * @property string $title
  * @property string $description
  * @property int $estimation
+ * @property int $project_id
  * @property int $executor_id
  * @property int $started_at
  * @property int $completed_at
@@ -25,6 +28,8 @@ use Yii;
  */
 class Task extends \yii\db\ActiveRecord
 {
+
+    const RELATION_PROJECT = 'project';
     /**
      * {@inheritdoc}
      */
@@ -36,12 +41,22 @@ class Task extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className(),
+            BlameableBehavior::className()
+        ];
+    }
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
             [['title', 'description', 'estimation', 'created_by', 'created_at'], 'required'],
             [['description'], 'string'],
-            [['estimation', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['estimation', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at', 'project_id'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['executor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['executor_id' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
@@ -91,6 +106,14 @@ class Task extends \yii\db\ActiveRecord
     public function getUpdatedBy()
     {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProject()
+    {
+        return $this->hasOne(Project::className(), ['id' => 'project_id']);
     }
 
     /**

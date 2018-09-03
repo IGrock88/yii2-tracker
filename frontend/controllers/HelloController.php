@@ -1,6 +1,8 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Project;
+use common\models\Task;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -26,6 +28,9 @@ class HelloController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $result = Task::find()->joinWith(Task::RELATION_PROJECT)->all();
+        return $this->render('index', ['result' => $result]);
     }
+
+
 }

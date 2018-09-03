@@ -2,9 +2,9 @@
 
 namespace backend\controllers;
 
+use common\models\search\ProjectSearch;
 use Yii;
 use common\models\Project;
-use common\models\ProjectSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
