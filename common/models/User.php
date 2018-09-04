@@ -71,7 +71,6 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
             ['email', 'email'],
             [['username', 'email'], 'unique'],
-            [['', 'auth_key'], 'safe'],
             [['password', 'username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_CREATE],
             [['username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_UPDATE]
         ];
