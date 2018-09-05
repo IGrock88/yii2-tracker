@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($model->username) ?></h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
@@ -28,15 +28,18 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
+            [
+                'attribute' => 'avatar',
+                'value' => $model->getThumbUploadUrl('avatar', \common\models\User::AVATAR_PREVIEW),
+                'format' => 'image'
+            ],
             'username',
-            'auth_key',
-            'password_hash',
-            'password_reset_token',
             'email:email',
-            'status',
-            'created_at',
-            'updated_at',
+            ['attribute' => 'status',
+                'value' => \common\models\User::STATUS_TEXT[$model->status]
+                ],
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

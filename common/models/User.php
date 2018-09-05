@@ -1,6 +1,8 @@
 <?php
 namespace common\models;
 
+use mohorev\file\UploadImageBehavior;
+use phpDocumentor\Reflection\Types\Self_;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -17,9 +19,12 @@ use yii\web\IdentityInterface;
  * @property string $email
  * @property string $auth_key
  * @property integer $status
+ * @property string $avatar
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ *
+ * @mixin UploadImageBehavior
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -27,8 +32,21 @@ class User extends ActiveRecord implements IdentityInterface
 
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
+
+    const STATUS_TEXT = [
+        self::STATUS_ACTIVE => 'активен',
+        self::STATUS_DELETED => 'удален'
+    ];
+
     const SCENARIO_ADMIN_CREATE = 'user_create';
     const SCENARIO_ADMIN_UPDATE = 'user_update';
+
+    const AVATAR_ICON = 'icon';
+    const AVATAR_PREVIEW = 'preview';
+    const AVATAR_CONFIG = [
+        self::AVATAR_ICON => ['width' => 40, 'quality' => 90],
+        self::AVATAR_PREVIEW => ['width' => 200, 'height' => 200]
+    ];
 
 
     /**
@@ -45,6 +63,18 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
+            [
+                'class' => \mohorev\file\UploadImageBehavior::class,
+                'attribute' => 'avatar',
+                'scenarios' => [self::SCENARIO_ADMIN_CREATE, self::SCENARIO_ADMIN_UPDATE],
+                //'placeholder' => '@app/modules/user/assets/images/userpic.jpg',
+                'path' => '@frontend/web/upload/avatar/{id}',
+                'url' => 'http://yii2-tracker-front/upload/avatar/{id}',
+                'thumbs' => [
+                    self::AVATAR_ICON => self::AVATAR_CONFIG[self::AVATAR_ICON],
+                    self::AVATAR_PREVIEW => self::AVATAR_CONFIG[self::AVATAR_PREVIEW]
+                ],
+            ],
             TimestampBehavior::className(),
         ];
     }
@@ -72,7 +102,19 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'email'],
             [['username', 'email'], 'unique'],
             [['password', 'username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_CREATE],
-            [['username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_UPDATE]
+            [['username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_UPDATE],
+            ['avatar', 'image', 'extensions' => 'jpg, jpeg, gif, png', 'on' => ['insert', 'update']],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'avatar' => 'Аватар',
+            'username' => 'Имя',
+            'login' => 'Логин',
+            'status' => 'Статус',
+            'password' => 'Пароль'
         ];
     }
 

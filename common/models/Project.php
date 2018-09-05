@@ -43,7 +43,6 @@ class Project extends \yii\db\ActiveRecord
         ];
     }
     /**
-    /**
      * {@inheritdoc}
      */
     public function rules()
@@ -55,7 +54,7 @@ class Project extends \yii\db\ActiveRecord
             [['title'], 'string', 'max' => 255],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
-            [['active']]
+            [['active'], 'safe']
         ];
     }
 

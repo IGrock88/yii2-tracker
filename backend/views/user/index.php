@@ -12,29 +12,40 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
             'id',
+            [
+                'attribute' => 'avatar',
+                'value' => function(\common\models\User $userModel){
+                    $imageUrl = $userModel->getThumbUploadUrl('avatar', \common\models\User::AVATAR_ICON);
+                    return $imageUrl ? $imageUrl : '';
+                },
+                'format' => 'image',
+                'contentOptions' => ['style'=>'text-align: center;vertical-align: middle;']
+            ],
             'username',
-            'auth_key',
-            'password_hash',
-            'password_reset_token',
-            //'email:email',
-            //'status',
-            //'created_at',
-            //'updated_at',
+            'email:email',
+            [
+                'attribute' => 'status',
+                'filter' => \common\models\User::STATUS_TEXT,
+                'value' => function(\common\models\User $userModel){
+                    return \common\models\User::STATUS_TEXT[$userModel->status];
+                }
+            ],
+
+            'created_at:datetime',
+            'updated_at:datetime',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
