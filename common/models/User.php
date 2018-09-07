@@ -103,7 +103,10 @@ class User extends ActiveRecord implements IdentityInterface
             [['username', 'email'], 'unique'],
             [['password', 'username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_CREATE],
             [['username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_UPDATE],
-            ['avatar', 'image', 'extensions' => 'jpg, jpeg, gif, png', 'on' => ['insert', 'update']]
+            [
+                'avatar', 'image', 'extensions' => 'jpg, jpeg, gif, png', 'on' => ['insert', 'update'],
+                'minSize' => '100',
+                'maxSize' => '10000000']
         ];
     }
 
