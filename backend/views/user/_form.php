@@ -22,7 +22,7 @@ use yii\bootstrap\ActiveForm;
         'options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <div class="row">
-        <div class="col-lg-2 col-sm-2">
+        <div class="col-lg-2">
             <div class="panel">
                 <div class="panel-body">
                     <?= Html::img($model->getThumbUploadUrl('avatar', \common\models\User::AVATAR_PREVIEW), ['class' => 'img-thumbnail']) ?>

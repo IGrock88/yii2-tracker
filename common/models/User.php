@@ -62,6 +62,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function behaviors()
     {
+        $host = Yii::$app->params['frontScheme'] . Yii::$app->params['frontDomain'];
+
         return [
             [
                 'class' => \mohorev\file\UploadImageBehavior::class,
@@ -69,7 +71,7 @@ class User extends ActiveRecord implements IdentityInterface
                 'scenarios' => [self::SCENARIO_ADMIN_CREATE, self::SCENARIO_ADMIN_UPDATE],
                 //'placeholder' => '@app/modules/user/assets/images/userpic.jpg',
                 'path' => '@frontend/web/upload/avatar/{id}',
-                'url' => 'http://yii2-tracker-front/upload/avatar/{id}',
+                'url' => $host . '/upload/avatar/{id}',
                 'thumbs' => [
                     self::AVATAR_ICON => self::AVATAR_CONFIG[self::AVATAR_ICON],
                     self::AVATAR_PREVIEW => self::AVATAR_CONFIG[self::AVATAR_PREVIEW]
@@ -234,7 +236,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setPassword($password)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        if(!$password){
+            $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        }
         $this->_password = $password;
     }
 
