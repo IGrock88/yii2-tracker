@@ -7,7 +7,7 @@
             [
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => [
-                    ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
+                    //['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
                     ['label' => 'Users', 'icon' => 'far fa-user', 'url' => ['/users']],
                     ['label' => 'Projects', 'icon' => 'far fa-clipboard', 'url' => ['/projects']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],

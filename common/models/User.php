@@ -44,7 +44,7 @@ class User extends ActiveRecord implements IdentityInterface
     const AVATAR_ICON = 'icon';
     const AVATAR_PREVIEW = 'preview';
     const AVATAR_CONFIG = [
-        self::AVATAR_ICON => ['width' => 40, 'quality' => 90],
+        self::AVATAR_ICON => ['width' => 15, 'quality' => 90],
         self::AVATAR_PREVIEW => ['width' => 200, 'height' => 200]
     ];
 
