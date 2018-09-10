@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\models\search\ProjectSearch;
+use common\models\User;
 use Yii;
 use common\models\Project;
 use yii\web\Controller;
@@ -86,15 +87,28 @@ class ProjectController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($this->loadModel($model) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $userList = User::find()->select('username')->indexBy('id')->column();
         return $this->render('update', [
             'model' => $model,
+            'userList' => $userList
         ]);
     }
 
+    private function loadModel(Project $model)
+    {
+        $data = Yii::$app->request->post($model->formName());
+        $projectUsers = $data[Project::RELATION_PROJECT_USERS] ?? null;
+
+        if($projectUsers !== null){
+            $model->projectUsers = $projectUsers === '' ? [] : $projectUsers;
+        }
+
+        return $model->load(Yii::$app->request->post());
+    }
     /**
      * Deletes an existing Project model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

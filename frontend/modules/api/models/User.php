@@ -14,7 +14,7 @@ class User extends \common\models\User
 
     public function fields()
     {
-        return ['id', 'name' => 'username'];
+        return ['id', 'username'];
     }
 
     public function extraFields()

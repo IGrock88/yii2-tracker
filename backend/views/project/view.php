@@ -31,10 +31,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description:ntext',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            ['attribute' => 'active',
+                'value' => \common\models\Project::STATUS_TEXT[$model->active]
+            ],
+            'creator.username',
+            'updater.username',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

@@ -91,7 +91,7 @@ class UserController extends Controller
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'model' => $model
         ]);
     }
 
