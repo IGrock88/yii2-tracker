@@ -18,12 +18,22 @@ use yii\behaviors\TimestampBehavior;
  * @property int $created_at
  * @property int $updated_at
  *
- * @property User $createdBy
- * @property User $updatedBy
+ * @property User $creator
+ * @property User $updater
  * @property ProjectUser[] $projectUsers
  */
 class Project extends \yii\db\ActiveRecord
 {
+
+    const RELATION_PROJECT_USERS = 'projectUsers';
+
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+
+    const STATUS_TEXT = [
+        self::STATUS_ACTIVE => 'активен',
+        self::STATUS_INACTIVE => 'неактивен'
+    ];
     /**
      * {@inheritdoc}
      */
@@ -50,7 +60,7 @@ class Project extends \yii\db\ActiveRecord
         return [
             [['title', 'description', 'created_by', 'created_at'], 'required'],
             [['description'], 'string'],
-            [['created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['created_by', 'updated_by', 'created_at', 'updated_at', 'active'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
@@ -77,7 +87,7 @@ class Project extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
+    public function getCreator()
     {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
@@ -85,7 +95,7 @@ class Project extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
+    public function getUpdater()
     {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }

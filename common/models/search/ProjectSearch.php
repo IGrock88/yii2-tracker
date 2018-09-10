@@ -18,7 +18,7 @@ class ProjectSearch extends Project
     public function rules()
     {
         return [
-            [['id', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'created_by', 'updated_by', 'created_at', 'updated_at', 'active'], 'integer'],
             [['title', 'description'], 'safe'],
         ];
     }
@@ -60,6 +60,7 @@ class ProjectSearch extends Project
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'active' => $this->active,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
             'created_at' => $this->created_at,

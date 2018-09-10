@@ -16,13 +16,33 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'created_by')->textInput() ?>
+    <?= $form->field($model, 'active')->dropDownList(\common\models\Project::STATUS_TEXT) ?>
 
-    <?= $form->field($model, 'updated_by')->textInput() ?>
+    <?= $form->field($model, \common\models\Project::RELATION_PROJECT_USERS)
+        ->widget(unclead\multipleinput\MultipleInput::class, [
+            'id'=> 'project_users_widget',
+            'max'               => 10,
+            'min'               => 0, // should be at least 2 rows
+            'allowEmptyList'    => false,
+            'enableGuessTitle'  => true,
+            'addButtonPosition' => MultipleInput::POS_HEADER,
+            'columns' => [
+                [
+                    'name' => 'project_id',
+                    'type' => 'hiddenInput',
+                    'value' => $model->id
+                ],
+                [
+                    'name' => 'user_id',
+                    'title' => 'Пользователь',
+                    'type' => 'dropDownList',
+                    'items' => \common\models\User::find()->select('username')->indexBy('id')->column()
+                ]
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
 
-    <?= $form->field($model, 'updated_at')->textInput() ?>
+
+            ]
+        ]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>

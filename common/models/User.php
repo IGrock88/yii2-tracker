@@ -8,6 +8,7 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use yii\web\Linkable;
 
 /**
  * User model
@@ -106,12 +107,15 @@ class User extends ActiveRecord implements IdentityInterface
             [['password', 'username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_CREATE],
             [['username', 'email'], 'required', 'on' => self::SCENARIO_ADMIN_UPDATE],
             [
-                'avatar', 'image', 'extensions' => 'jpg, jpeg, gif, png', 'on' => ['insert', 'update'],
+                'avatar', 'image', 'extensions' => 'jpg, jpeg, gif, png', 'on' => [self::SCENARIO_ADMIN_CREATE, self::SCENARIO_ADMIN_UPDATE],
                 'minSize' => '100',
                 'maxSize' => '10000000']
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function attributeLabels()
     {
         return [
@@ -119,7 +123,9 @@ class User extends ActiveRecord implements IdentityInterface
             'username' => 'Имя',
             'login' => 'Логин',
             'status' => 'Статус',
-            'password' => 'Пароль'
+            'password' => 'Пароль',
+            'created_at' => 'Дата создания',
+            'updated_at' => 'Дата изменения'
         ];
     }
 
@@ -230,6 +236,22 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProjectUsers()
+    {
+        return $this->hasMany(Project::class, ['user_id => id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProjects()
+    {
+        return $this->hasMany(Project::class, ['id => project_id'])->via('projectUsers');
+    }
+
+    /**
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
@@ -265,4 +287,6 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
+
 }

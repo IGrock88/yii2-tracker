@@ -15,5 +15,8 @@ return [
         'chat' => [
             'class' => 'common\modules\chat\Module',
         ],
+        'api' => [
+            'class' => 'frontend\modules\api\Module',
+        ],
     ],
 ];

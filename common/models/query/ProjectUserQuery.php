@@ -7,7 +7,7 @@ namespace common\models\query;
  *
  * @see \common\models\Project_user
  */
-class Project_userQuery extends \yii\db\ActiveQuery
+class ProjectUserQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {

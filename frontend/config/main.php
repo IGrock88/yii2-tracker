@@ -14,6 +14,9 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -36,19 +39,16 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-//        'view' => [
-//            'theme' => [
-//                'pathMap' => [
-//                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
-//                ],
-//            ],
-//        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '<c:[\w-]+>/<id:\d+>' => '<c>/view',
-                '<c:>s' => '<c>/index'
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api\user',
+                ],
+                '<controller:[\w-]+>/<id:\d+>' => '<controller>/view',
+                '<controller:>s' => '<controller>/index'
             ],
         ],
 
