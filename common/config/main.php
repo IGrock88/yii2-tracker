@@ -10,6 +10,12 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'projectService' => [
+            'class' => 'common\services\ProjectService'
+        ],
+        'emailService' => [
+            'class' => 'common\services\EmailService'
+        ]
     ],
     'modules' => [
         'chat' => [
