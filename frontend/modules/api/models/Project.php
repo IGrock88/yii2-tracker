@@ -19,6 +19,6 @@ class Project extends \common\models\Project
 
     public function extraFields()
     {
-        //return ['projectUsers'];
+        return ['projectUsers'];
     }
 }
