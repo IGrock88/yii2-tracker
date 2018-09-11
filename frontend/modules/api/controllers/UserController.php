@@ -13,9 +13,5 @@ class UserController extends \yii\rest\ActiveController
 
     public $modelClass = 'frontend\modules\api\models\User';
 
-    public function actionTest()
-    {
-        echo 'test';
-    }
 
 }
