@@ -38,13 +38,6 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-//        'assetManager' => [
-//            'bundles' => [
-//                'dmstr\web\AdminLteAsset' => [
-//                    'skin' => 'skin-red',
-//                ],
-//            ],
-//        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
