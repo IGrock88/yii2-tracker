@@ -14,6 +14,9 @@ use common\services\events\AssignRole;
 class NotificationService
 {
 
+    /**
+     * @param AssignRole $event
+     */
     public function sendChangeRoleEmail(AssignRole $event)
     {
         $views = ['html' => 'assignRoleEmailToProject-html', 'text' => 'assignRoleEmailToProject-text'];
