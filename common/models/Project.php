@@ -80,12 +80,12 @@ class Project extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
+            'title' => 'Название проекта',
+            'description' => 'Описание проекта',
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Создан',
+            'updated_at' => 'Обновлен',
         ];
     }
 
