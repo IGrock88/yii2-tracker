@@ -9,18 +9,25 @@
 namespace common\services;
 
 
+use common\models\User;
 use Yii;
 use yii\base\Component;
 
 class EmailService extends Component
 {
-    public function send($to, $subject, $views, $update)
+    /**
+     * @param $subject
+     * @param $views
+     * @param $data
+     * @return bool
+     */
+    public function send($subject, $views, $data)
     {
         return Yii::$app
             ->mailer
-            ->compose($views, $update)
+            ->compose($views, $data)
             ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-            ->setTo($to)
+            ->setTo($data['user']->email)
             ->setSubject($subject)
             ->send();
     }

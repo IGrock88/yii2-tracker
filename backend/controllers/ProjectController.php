@@ -87,7 +87,15 @@ class ProjectController extends Controller
     {
         $model = $this->findModel($id);
 
+        $currentProjectUsers = $model->getUsersByRoles();
+
         if ($this->loadModel($model) && $model->save()) {
+            if($changedRoles = array_diff_assoc($model->getUsersByRoles(), $currentProjectUsers)){
+                foreach ($changedRoles as $userId => $role){
+                    Yii::$app->projectService->assignRole($model, User::findOne($userId), $role);
+
+                }
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

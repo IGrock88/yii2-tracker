@@ -113,6 +113,14 @@ class Project extends \yii\db\ActiveRecord
         return $this->hasMany(ProjectUser::className(), ['project_id' => 'id']);
     }
 
+    /**
+     * @return array
+     */
+    public function getUsersByRoles()
+    {
+        return $this->getProjectUsers()->select('role')->indexBy('user_id')->column();
+    }
+
 
     /**
      * {@inheritdoc}
@@ -122,4 +130,6 @@ class Project extends \yii\db\ActiveRecord
     {
         return new \common\models\query\ProjectQuery(get_called_class());
     }
+
+
 }

@@ -9,6 +9,9 @@
 namespace common\services;
 
 
+use common\models\Project;
+use common\models\User;
+use common\services\events\AssignRole;
 use yii\base\Component;
 
 class ProjectService extends Component
@@ -16,9 +19,13 @@ class ProjectService extends Component
 
     const EVENT_ASSIGN_ROLE = 'event_assign_role';
 
-    public function assignRole($project, $user, $role)
+    public function assignRole(Project $project, User $user, $role)
     {
-        $event = new AssignRoleEvent();
+        $event = new AssignRole();
+        $event->setProject($project);
+        $event->setUser($user);
+        $event->setRole($role);
+        $this->trigger(self::EVENT_ASSIGN_ROLE, $event);
     }
 
 }

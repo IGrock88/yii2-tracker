@@ -10,11 +10,14 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'notificationService' => [
+            'class' => \common\services\NotificationService::class
+        ],
         'projectService' => [
-            'class' => 'common\services\ProjectService'
+            'class' => \common\services\ProjectService::class
         ],
         'emailService' => [
-            'class' => 'common\services\EmailService'
+            'class' => \common\services\EmailService::class
         ]
     ],
     'modules' => [
