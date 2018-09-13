@@ -43,7 +43,7 @@ $currentUser = Yii::$app->user->identity;
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                <?= Html::a('Profile', ['user/profile'], ['class' => 'btn btn-default btn-flat']);?>
                             </div>
                             <div class="pull-right">
                                 <?= Html::a(
