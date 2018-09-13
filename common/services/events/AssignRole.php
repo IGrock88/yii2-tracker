@@ -23,11 +23,6 @@ class AssignRole extends Event
     private $project;
     private $role;
 
-//    public function dump()
-//    {
-//        return ['user' => $this->user->id, 'project' => $this->project, 'role' => $this->role];
-//    }
-
     /**
      * @param User $user
      */
