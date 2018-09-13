@@ -22,17 +22,42 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'title',
+            [
+                'attribute' => 'title',
+                'value' => function (\common\models\Project $model) {
+                    return Html::a($model->title, ['update', 'id' => $model->id]);
+                },
+                'format' => 'html'
+            ],
             'description:ntext',
-            'created_by',
-            'updated_by',
-            //'created_at',
-            //'updated_at',
+            [
+                'attribute' => \common\models\Project::RELATION_PROJECT_USERS . '.role',
+                'value' => function (\common\models\Project $model) {
+                    return join('; ', $model->getUserRoles(Yii::$app->user->id));
+                }
+            ],
+            [
+                'attribute' => 'creator',
+                'label' => 'Создатель',
+                'value' => function (\common\models\Project $model) {
+                    return Html::a($model->creator->username, ['user/view', 'id' => $model->creator->id]);
+                },
+                'format' => 'html'
+
+            ],
+            [
+                'attribute' => 'updater',
+                'label' => 'Кто обновил',
+                'value' => function (\common\models\Project $model) {
+                    return Html::a($model->updater->username, ['user/view', 'id' => $model->updater->id]);
+                },
+                'format' => 'html'
+
+            ],
+            'created_at:datetime',
+            'updated_at:datetime',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

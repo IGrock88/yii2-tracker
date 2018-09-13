@@ -121,6 +121,15 @@ class Project extends \yii\db\ActiveRecord
         return $this->getProjectUsers()->select('role')->indexBy('user_id')->column();
     }
 
+    /**
+     * @param $idUser
+     * @return array
+     */
+    public function getUserRoles($idUser)
+    {
+        return $this->getProjectUsers()->select('role')->where(['user_id' => $idUser])->column();
+    }
+
 
     /**
      * {@inheritdoc}

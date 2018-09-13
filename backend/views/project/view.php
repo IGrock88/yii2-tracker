@@ -29,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description:ntext',
+
             ['attribute' => 'active',
                 'value' => \common\models\Project::STATUS_TEXT[$model->active],
                 'label' => 'Статус'
