@@ -31,11 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description:ntext',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            'creator.username',
+            'updater.username',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
+    <?php echo \yii2mod\comments\widgets\Comment::widget([
+        'model' => $model,
+    ]); ?>
 
 </div>

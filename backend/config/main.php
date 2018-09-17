@@ -43,7 +43,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 '<controller:[\w-]+>/<id:\d+>' => '<controller>/view',
-                '<controller:(user|project)>s' => '<controller>/index'
+                '<controller:(user|project|task)>s' => '<controller>/index'
             ],
         ],
 

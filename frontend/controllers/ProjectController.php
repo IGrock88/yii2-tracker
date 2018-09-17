@@ -34,7 +34,7 @@ class ProjectController extends Controller
      * Lists all Project models.
      * @return mixed
      */
-    public function actionMy()
+    public function actionIndex()
     {
 //        $searchModel = new ProjectSearch();
 //        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

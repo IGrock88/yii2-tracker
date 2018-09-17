@@ -18,14 +18,23 @@ return [
         ],
         'emailService' => [
             'class' => \common\services\EmailService::class
+        ],
+        'i18n' => [
+            'translations' => [
+                'yii2mod.comments' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@yii2mod/comments/messages',
+                ],
+                // ...
+            ],
         ]
     ],
     'modules' => [
         'chat' => [
             'class' => 'common\modules\chat\Module',
         ],
-        'api' => [
-            'class' => 'frontend\modules\api\Module',
-        ],
+        'comment' => [
+            'class' => 'yii2mod\comments\Module',
+        ]
     ],
 ];

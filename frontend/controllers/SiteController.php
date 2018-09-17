@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\User;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -88,6 +89,8 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $user = User::findByUsername($model->username);
+            Yii::info('auth success, user id - ' . $user->id, 'auth');
             return $this->goBack();
         } else {
             $model->password = '';

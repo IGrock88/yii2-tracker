@@ -44,10 +44,14 @@ class User extends ActiveRecord implements IdentityInterface
 
     const AVATAR_ICON = 'icon';
     const AVATAR_PREVIEW = 'preview';
+    const AVATAR_COMMENTS = 'comments';
     const AVATAR_CONFIG = [
         self::AVATAR_ICON => ['width' => 15, 'quality' => 90],
-        self::AVATAR_PREVIEW => ['width' => 200, 'height' => 200]
+        self::AVATAR_PREVIEW => ['width' => 200, 'height' => 200],
+        self::AVATAR_COMMENTS => ['width' => 30]
     ];
+
+    const AVATAR_IMG_DIR = '/upload/avatar/';
 
 
     /**
@@ -72,10 +76,11 @@ class User extends ActiveRecord implements IdentityInterface
                 'scenarios' => [self::SCENARIO_ADMIN_CREATE, self::SCENARIO_ADMIN_UPDATE],
                 //'placeholder' => '@app/modules/user/assets/images/userpic.jpg',
                 'path' => '@frontend/web/upload/avatar/{id}',
-                'url' => $host . '/upload/avatar/{id}',
+                'url' => $host . self::AVATAR_IMG_DIR . '{id}',
                 'thumbs' => [
                     self::AVATAR_ICON => self::AVATAR_CONFIG[self::AVATAR_ICON],
-                    self::AVATAR_PREVIEW => self::AVATAR_CONFIG[self::AVATAR_PREVIEW]
+                    self::AVATAR_PREVIEW => self::AVATAR_CONFIG[self::AVATAR_PREVIEW],
+                    self::AVATAR_COMMENTS => self::AVATAR_CONFIG[self::AVATAR_COMMENTS]
                 ],
             ],
             TimestampBehavior::className(),
@@ -286,6 +291,15 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+
+    /**
+     * @return null|string
+     */
+    public function getAvatar()
+    {
+        return $this->getThumbUploadUrl('avatar', self::AVATAR_COMMENTS);
     }
 
 

@@ -34,6 +34,13 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'categories' => ['auth'],
+                    'logFile' => '@runtime/logs/auth.log',
+                    'logVars' => ['_GET', '_POST', '!_POST.LoginForm', '_FILES', '_COOKIE', '_SESSION', '_SERVER']
+                ],
             ],
         ],
         'errorHandler' => [
@@ -48,10 +55,14 @@ return [
                     'controller' => ['api/user', 'api/project'],
                 ],
                 '<controller:[\w-]+>/<id:\d+>' => '<controller>/view',
-                '<controller:(user|project)>s' => '<controller>/index'
+                '<controller:(user|project|task)>s' => '<controller>/index'
             ],
         ],
-
+    ],
+    'modules' => [
+        'api' => [
+            'class' => 'frontend\modules\api\Module',
+        ],
     ],
     'params' => $params,
 ];

@@ -9,6 +9,8 @@
 namespace common\services;
 
 
+use common\models\Project;
+use common\models\User;
 use common\services\events\AssignRole;
 
 class NotificationService
@@ -17,10 +19,10 @@ class NotificationService
     /**
      * @param AssignRole $event
      */
-    public function sendChangeRoleEmail(AssignRole $event)
+    public function sendChangeRoleEmail(User $user, Project $project, $role)
     {
         $views = ['html' => 'assignRoleEmailToProject-html', 'text' => 'assignRoleEmailToProject-text'];
-        $data = ['project' => $event->getProject(), 'user' => $event->getUser(), 'role' => $event->getRole()];
+        $data = ['project' => $project, 'user' => $user, 'role' => $role];
         \Yii::$app->emailService->send('New role', $views, $data);
     }
 }
