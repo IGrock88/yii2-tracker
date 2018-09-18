@@ -7,6 +7,22 @@ return [
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'language' => 'ru-RU',
     'components' => [
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'categories' => ['auth'],
+                    'logFile' => '@runtime/logs/auth.log',
+                    'logVars' => ['_GET', '_POST', '!_POST.LoginForm', '_FILES', '_COOKIE', '_SESSION', '_SERVER']
+                ],
+            ],
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

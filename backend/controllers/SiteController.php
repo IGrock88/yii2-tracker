@@ -1,7 +1,9 @@
 <?php
 namespace backend\controllers;
 
+use common\models\User;
 use Yii;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -70,6 +72,7 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }

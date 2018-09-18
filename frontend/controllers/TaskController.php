@@ -2,9 +2,11 @@
 
 namespace frontend\controllers;
 
+use common\models\query\TaskQuery;
 use Yii;
 use common\models\Task;
 use common\models\search\TaskSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -20,6 +22,15 @@ class TaskController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -37,6 +48,10 @@ class TaskController extends Controller
     {
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $query = $dataProvider->query;
+        /**@var  $query  TaskQuery      */
+        $query->byUser(Yii::$app->user->id);
 
         return $this->render('index', [
             'searchModel' => $searchModel,

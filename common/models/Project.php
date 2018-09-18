@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use common\models\query\ProjectQuery;
+use common\models\query\ProjectUserQuery;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use Yii;
 use yii\behaviors\BlameableBehavior;
@@ -63,13 +65,12 @@ class Project extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'created_by', 'created_at'], 'required'],
+            [['title', 'description'], 'required'],
             [['description'], 'string'],
             [['created_by', 'updated_by', 'created_at', 'updated_at', 'active'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
-            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
-            [['active'], 'safe']
+            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']]
         ];
     }
 
@@ -106,7 +107,7 @@ class Project extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery| ProjectUserQuery
      */
     public function getProjectUsers()
     {
@@ -119,15 +120,6 @@ class Project extends \yii\db\ActiveRecord
     public function getUsersByRoles()
     {
         return $this->getProjectUsers()->select('role')->indexBy('user_id')->column();
-    }
-
-    /**
-     * @param $idUser
-     * @return array
-     */
-    public function getUserRoles($idUser)
-    {
-        return $this->getProjectUsers()->select('role')->where(['user_id' => $idUser])->column();
     }
 
 

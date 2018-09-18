@@ -28,4 +28,9 @@ class ProjectService extends Component
         $this->trigger(self::EVENT_ASSIGN_ROLE, $event);
     }
 
+    public function getRoles(Project $project, User $user)
+    {
+        return $project->getProjectUsers()->byUser($user->id)->select('role')->column();
+    }
+
 }

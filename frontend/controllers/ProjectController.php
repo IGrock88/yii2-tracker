@@ -2,10 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\models\query\ProjectQuery;
 use Yii;
 use common\models\Project;
 use common\models\search\ProjectSearch;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -21,6 +23,15 @@ class ProjectController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -36,17 +47,16 @@ class ProjectController extends Controller
      */
     public function actionIndex()
     {
-//        $searchModel = new ProjectSearch();
-//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new ProjectSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => Project::find()
-                ->joinWith(Project::RELATION_PROJECT_USERS)
-                ->where(['=', 'user_id', Yii::$app->user->id])
-        ]);
+        $query = $dataProvider->query;
+        /**@var  $query  ProjectQuery      */
+        $query->byUser(Yii::$app->user->id);
+
 
         return $this->render('index', [
-            //'searchModel' => $searchModel,
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -61,24 +71,6 @@ class ProjectController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new Project model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Project();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('create', [
-            'model' => $model,
         ]);
     }
 

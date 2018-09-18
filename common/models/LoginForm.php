@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use yii\helpers\VarDumper;
 
 /**
  * Login form
@@ -45,7 +46,19 @@ class LoginForm extends Model
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
             }
+            $adminUsers = Yii::$app->params['users'];
+
+            if ($user && isset($adminUsers) && !in_array($user->id, $adminUsers)){
+                $this->addError($attribute, 'access denied');
+            }
         }
+
+        if (!$this->hasErrors()){
+            $user = User::findByUsername($this->username);
+            Yii::info('auth success, user id - ' . $user->id, 'auth');
+        }
+
+
     }
 
     /**
