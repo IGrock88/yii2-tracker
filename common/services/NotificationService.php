@@ -11,13 +11,14 @@ namespace common\services;
 
 use common\models\Project;
 use common\models\User;
-use common\services\events\AssignRole;
+
 
 class NotificationService
 {
-
     /**
-     * @param AssignRole $event
+     * @param User $user
+     * @param Project $project
+     * @param $role
      */
     public function sendChangeRoleEmail(User $user, Project $project, $role)
     {

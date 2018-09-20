@@ -2,10 +2,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\datetime\DateTimePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Task */
 /* @var $form yii\widgets\ActiveForm */
+/* @var \common\models\Project[] $projects*/
 ?>
 
 <div class="task-form">
@@ -16,21 +18,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'estimation')->textInput() ?>
+<!--    https://github.com/kartik-v/yii2-widget-datepicker-->
+    <?= $form->field($model, 'estimation')->textInput()->widget(\kartik\datecontrol\DateControl::class, [
+        'options' => ['placeholder' => 'Сделать до'],
+        'convertFormat' => true,
+        'type' => \kartik\datecontrol\Module::FORMAT_DATETIME,
+    ]) ?>
 
-    <?= $form->field($model, 'executor_id')->textInput() ?>
-
-    <?= $form->field($model, 'started_at')->textInput() ?>
-
-    <?= $form->field($model, 'completed_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
+    <?= $form->field($model, 'project_id')->dropDownList($projects)->label('Проект') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

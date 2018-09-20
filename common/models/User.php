@@ -129,7 +129,7 @@ class User extends ActiveRecord implements IdentityInterface
             'login' => 'Логин',
             'status' => 'Статус',
             'password' => 'Пароль',
-            'created_at' => 'Дата создания',
+            'created_at' => 'Пользователь зарегистрирован',
             'updated_at' => 'Дата изменения'
         ];
     }

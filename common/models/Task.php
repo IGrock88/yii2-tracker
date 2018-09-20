@@ -47,7 +47,8 @@ class Task extends \yii\db\ActiveRecord
     {
         return [
             TimestampBehavior::className(),
-            BlameableBehavior::className()
+            BlameableBehavior::className(),
+
         ];
     }
     /**
@@ -56,9 +57,9 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'estimation', 'created_by', 'created_at'], 'required'],
+            [['title', 'description', 'estimation'], 'required'],
             [['description'], 'string'],
-            [['estimation', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at', 'project_id'], 'integer'],
+            [['created_at', 'updated_at', 'project_id'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['executor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['executor_id' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
@@ -66,23 +67,24 @@ class Task extends \yii\db\ActiveRecord
         ];
     }
 
+
     /**
      * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'estimation' => 'Estimation',
+            'id' => 'ID задачи',
+            'title' => 'Название задачи',
+            'description' => 'Описание задачи',
+            'estimation' => 'Сделать до',
             'executor_id' => 'Executor ID',
-            'started_at' => 'Started At',
-            'completed_at' => 'Completed At',
-            'created_by' => 'Created By',
-            'updated_by' => 'Updated By',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'started_at' => 'Начало выполнения',
+            'completed_at' => 'Время завершения',
+            'created_by' => 'Кем создан',
+            'updated_by' => 'Кем изменен',
+            'created_at' => 'Время создания',
+            'updated_at' => 'Время изменения',
         ];
     }
 

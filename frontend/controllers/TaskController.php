@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Project;
 use common\models\query\TaskQuery;
 use Yii;
 use common\models\Task;
@@ -81,12 +82,16 @@ class TaskController extends Controller
     {
         $model = new Task();
 
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $projects = Project::find()->byUser(Yii::$app->user->id)
+            ->select('title')->indexBy('id')->column();
         return $this->render('create', [
             'model' => $model,
+            'projects' => $projects
         ]);
     }
 
@@ -105,8 +110,13 @@ class TaskController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+
+
+        $projects = Project::find()->byUser(Yii::$app->user->id)
+            ->select('title')->indexBy('id')->column();
         return $this->render('update', [
             'model' => $model,
+            'projects' => $projects
         ]);
     }
 

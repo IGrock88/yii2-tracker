@@ -10,9 +10,11 @@ namespace common\services;
 
 
 use common\models\Project;
+use common\models\ProjectUser;
 use common\models\User;
 use common\services\events\AssignRole;
 use yii\base\Component;
+use yii\base\Theme;
 
 class ProjectService extends Component
 {
@@ -31,6 +33,11 @@ class ProjectService extends Component
     public function getRoles(Project $project, User $user)
     {
         return $project->getProjectUsers()->byUser($user->id)->select('role')->column();
+    }
+
+    public function hasRole(Project $project, User $user, $role)
+    {
+        return in_array($role, $this->getRoles($project, $user));
     }
 
 }

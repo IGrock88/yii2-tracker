@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\TaskSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -24,21 +25,57 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
+            [
+                'attribute' => 'project.title',
+                'value' => function (\common\models\Task $model) {
+                    return Html::a($model->project->title, ['project/view', 'id' => $model->project->id]);
+                },
+                'format' => 'html'
+            ],
             'id',
-            'title',
+            [
+                'attribute' => 'title',
+                'value' => function(\common\models\Task $model){
+                    return Html::a($model->title, ['view', 'id' => $model->id]);
+                },
+                'format' => 'html'
+
+            ],
             'description:ntext',
-            'estimation',
-            'executor_id',
-            //'started_at',
-            //'completed_at',
+            'estimation:datetime',
+            [
+                'attribute' => 'executor.username',
+                'value' => function (\common\models\Task $model) {
+                    return !empty($model->executor) ?
+                        Html::a($model->executor->username, ['user/view', 'id' => $model->executor->id]) : 'Не назначен';
+
+                },
+                'label' => 'Исполнитель',
+                'format' => 'html'
+            ],
+            'started_at:datetime',
+            'completed_at:datetime',
             //'created_by',
             //'updated_by',
-            //'created_at',
-            //'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'visibleButtons' => [
+                    'update' => function (\common\models\Task $model) {
+                        return Yii::$app->taskService
+                            ->canManage($model->project,
+                                \Yii::$app->user->identity,
+                                \common\models\ProjectUser::ROLE_MANAGER);
+                    },
+                    'delete' => function (\common\models\Task $model) {
+                        return Yii::$app->taskService
+                            ->canManage($model->project,
+                                \Yii::$app->user->identity,
+                                \common\models\ProjectUser::ROLE_MANAGER);
+                    },
+                    'view' => false
+                ]],
         ],
     ]); ?>
     <?php Pjax::end(); ?>

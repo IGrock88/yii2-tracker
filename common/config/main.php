@@ -1,4 +1,8 @@
 <?php
+
+
+use kartik\datecontrol\Module;
+
 return [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -35,6 +39,9 @@ return [
         'emailService' => [
             'class' => \common\services\EmailService::class
         ],
+        'taskService' => [
+            'class' => \common\services\TaskService::class
+        ],
         'i18n' => [
             'translations' => [
                 'yii2mod.comments' => [
@@ -51,6 +58,28 @@ return [
         ],
         'comment' => [
             'class' => 'yii2mod\comments\Module',
+        ],
+        //документация http://demos.krajee.com/datecontrol
+        'datecontrol' =>  [
+            'class' => '\kartik\datecontrol\Module',
+            'displaySettings' => [
+                Module::FORMAT_DATETIME => 'dd-MM-yyyy HH:mm:ss',
+            ],
+            'saveSettings' => [
+                Module::FORMAT_DATETIME => 'php:U',
+            ],
+            'displayTimezone' => 'Europe/Moscow',
+            'autoWidget' => true,
+            'autoWidgetSettings' => [
+                Module::FORMAT_DATETIME => [
+                    'pluginOptions' => [
+                        'todayHighlight' => true,
+                        'autoclose' => true,
+                        'startDate' => date("Y-m-d H:i:s"),
+                        'format' => 'yyyy-MM-dd H:m:s'
+                    ]
+                ],
+            ],
         ]
     ],
 ];

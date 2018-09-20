@@ -80,7 +80,7 @@ class Project extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'ID проекта',
             'title' => 'Название проекта',
             'description' => 'Описание проекта',
             'created_by' => 'Created By',

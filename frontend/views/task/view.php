@@ -13,7 +13,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="task-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php if (Yii::$app->taskService->canManage($model->project, \Yii::$app->user->identity,
+     \common\models\ProjectUser::ROLE_MANAGER)){?>
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -24,21 +25,31 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
+    <?php }?>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
+            [
+                'attribute' => 'project.title',
+                'value' => Html::a($model->project->title, ['project/view', 'id' => $model->project->id]),
+                'format' => 'html'
+            ],
             'id',
             'title',
             'description:ntext',
-            'estimation',
-            'executor_id',
-            'started_at',
-            'completed_at',
+            'estimation:datetime',
+            [
+                'attribute' => 'executor.name',
+                'value' => Html::a($model->executor->username, ['user/view', 'id' => $model->executor->id]),
+                'format' => 'html'
+            ],
+            'started_at:datetime',
+            'completed_at:datetime',
             'created_by',
             'updated_by',
-            'created_at',
-            'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 
