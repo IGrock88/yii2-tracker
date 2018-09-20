@@ -39,7 +39,7 @@ class TaskService
     public function takeTask(Task $task, User $user)
     {
         if ($this->canTake($task, $user)){
-            $task->started_at = Yii::$app->formatter->asTimestamp(date('Y-d-m h:i:s'));
+            $task->started_at = time();
             $task->executor_id = $user->id;
 
         }
@@ -49,7 +49,13 @@ class TaskService
     public function completeTask(Task $task, User $user)
     {
         if ($this->canComplete($task, $user)){
-            $task->completed_at = Yii::$app->formatter->asTimestamp(date('Y-d-m h:i:s'));
+            $task->completed_at = time();
         }
     }
+
+    public function isComplete(Task $task)
+    {
+        return !empty($task->completed_at) && !empty($task->started_at);
+    }
+
 }

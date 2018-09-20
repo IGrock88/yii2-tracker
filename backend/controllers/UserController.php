@@ -75,8 +75,15 @@ class UserController extends Controller
      */
     public function actionProfile()
     {
+        $model = $this->findModel(Yii::$app->user->id);
+        $model->setScenario(User::SCENARIO_ADMIN_UPDATE);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
         return $this->render('update', [
-            'model' => $this->findModel(Yii::$app->user->id),
+            'model' => $model,
         ]);
     }
 

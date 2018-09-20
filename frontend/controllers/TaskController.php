@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Project;
+use common\models\ProjectUser;
 use common\models\query\TaskQuery;
 use Yii;
 use common\models\Task;
@@ -54,9 +55,12 @@ class TaskController extends Controller
         /**@var  $query  TaskQuery      */
         $query->byUser(Yii::$app->user->id);
 
+        $userProjects = Project::find()->byUser(Yii::$app->user->id)->select('title')->indexBy('id')->column();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'userProjects' => $userProjects,
         ]);
     }
 
@@ -73,6 +77,17 @@ class TaskController extends Controller
         ]);
     }
 
+    public function actionRedo($id)
+    {
+        $model = $this->findModel($id);
+        $model->completed_at = null;
+
+        if ($model->save()){
+            Yii::$app->session->setFlash('success', 'Задача отправлена на доработку');
+            $this->redirect('index');
+        }
+    }
+
     /**
      * Creates a new Task model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -87,8 +102,9 @@ class TaskController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        $projects = Project::find()->byUser(Yii::$app->user->id)
+        $projects = Project::find()->byUser(Yii::$app->user->id, ProjectUser::ROLE_MANAGER)
             ->select('title')->indexBy('id')->column();
+
         return $this->render('create', [
             'model' => $model,
             'projects' => $projects
@@ -106,13 +122,13 @@ class TaskController extends Controller
     {
         $model = $this->findModel($id);
 
+        $model->setScenario(Task::SCENARIO_UPDATE);
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-
-
-        $projects = Project::find()->byUser(Yii::$app->user->id)
+        $projects = Project::find()->byUser(Yii::$app->user->id, ProjectUser::ROLE_MANAGER)
             ->select('title')->indexBy('id')->column();
         return $this->render('update', [
             'model' => $model,

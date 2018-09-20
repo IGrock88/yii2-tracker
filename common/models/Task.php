@@ -21,6 +21,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int $updated_by
  * @property int $created_at
  * @property int $updated_at
+ * @property int $rating
  *
  * @property User $executor
  * @property User $createdBy
@@ -31,6 +32,7 @@ use yii\behaviors\TimestampBehavior;
 class Task extends \yii\db\ActiveRecord
 {
 
+    const SCENARIO_UPDATE = 'task_update';
     const RELATION_PROJECT = 'project';
     /**
      * {@inheritdoc}
@@ -57,9 +59,10 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'estimation'], 'required'],
+            [['title', 'description', 'estimation','project'], 'required'],
             [['description'], 'string'],
             [['created_at', 'updated_at', 'project_id'], 'integer'],
+            [['rating'], 'integer', 'min' => 1, 'max' => 5, 'on' => self::SCENARIO_UPDATE],
             [['title'], 'string', 'max' => 255],
             [['executor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['executor_id' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
@@ -85,6 +88,7 @@ class Task extends \yii\db\ActiveRecord
             'updated_by' => 'Кем изменен',
             'created_at' => 'Время создания',
             'updated_at' => 'Время изменения',
+            'rating' => 'Оценка задачи'
         ];
     }
 

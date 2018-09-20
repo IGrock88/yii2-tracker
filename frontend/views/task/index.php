@@ -7,30 +7,36 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\TaskSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var \common\models\Project[] $userProjects */
 
 $this->title = 'Tasks';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="task-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+    <?php if (Yii::$app->projectService->hasRolesAllProject(Yii::$app->user->identity,
+        \common\models\ProjectUser::ROLE_MANAGER)){ ?>
     <p>
         <?= Html::a('Create Task', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php }?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             [
-                'attribute' => 'project.title',
+                'attribute' => 'project_id',
+                'filter' => $userProjects,
                 'value' => function (\common\models\Task $model) {
-                    return Html::a($model->project->title, ['project/view', 'id' => $model->project->id]);
+                    return Html::a($model->project->title, ['project/view', 'id' => $model->project_id]);
                 },
-                'format' => 'html'
+                'format' => 'html',
+                'label' => 'Проект'
             ],
             'id',
             [
@@ -41,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html'
 
             ],
-            'description:ntext',
+            //'description:ntext',
             'estimation:datetime',
             [
                 'attribute' => 'executor.username',
@@ -53,15 +59,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Исполнитель',
                 'format' => 'html'
             ],
-            'started_at:datetime',
-            'completed_at:datetime',
+            'started_at:date',
+            'completed_at:date',
             //'created_by',
             //'updated_by',
-            'created_at:datetime',
+            'created_at:date',
             'updated_at:datetime',
 
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{takeTask}{completeTask}{update}{delete}',
+                'template' => '{takeTask}{completeTask}{redoTask}{update}{delete}',
                 'buttons' => [
                     'takeTask' => function ($url, \common\models\Task $model, $key) {
                         return Html::a(\yii\bootstrap\Html::icon('hand-down'), ['take', 'id' => $model->id],[
@@ -78,19 +84,27 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'method' => 'post',
                             ],
                         ]);
+                    },
+                    'redoTask' => function($url, \common\models\Task $model, $key){
+                        return Html::a(\yii\bootstrap\Html::icon('repeat'), ['redo', 'id' => $model->id],[
+                            'data' => [
+                                'confirm' => 'Отправить на доработку?',
+                                'method' => 'post',
+                            ],
+                        ]);
                     }
                 ],
                 'visibleButtons' => [
                     'update' => function (\common\models\Task $model) {
                         return Yii::$app->taskService
                             ->canManage($model->project,
-                                \Yii::$app->user->identity,
+                                Yii::$app->user->identity,
                                 \common\models\ProjectUser::ROLE_MANAGER);
                     },
                     'delete' => function (\common\models\Task $model) {
                         return Yii::$app->taskService
                             ->canManage($model->project,
-                                \Yii::$app->user->identity,
+                                Yii::$app->user->identity,
                                 \common\models\ProjectUser::ROLE_MANAGER);
                     },
                     'takeTask' => function (\common\models\Task $model) {
@@ -98,7 +112,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'completeTask' => function(\common\models\Task $model){
                         return Yii::$app->taskService->canComplete($model, Yii::$app->user->identity);
+                    },
+                    'redoTask' => function(\common\models\Task $model){
+
+                        return Yii::$app->taskService->canManage($model->project, Yii::$app->user->identity) &&
+                            Yii::$app->taskService->isComplete($model);
                     }
+
 
                 ]],
         ],

@@ -24,10 +24,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'username',
-            'status',
+            [
+                'attribute' => 'status',
+                'filter' => \common\models\User::STATUS_TEXT,
+                'value' => function(\common\models\User $userModel){
+                    return \common\models\User::STATUS_TEXT[$userModel->status];
+                }
+            ],
             'created_at:datetime',
-            //'updated_at',
-
         ],
     ]); ?>
     <?php Pjax::end(); ?>

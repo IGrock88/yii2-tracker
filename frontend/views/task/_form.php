@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use kartik\datetime\DateTimePicker;
+use kartik\rating\StarRating;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Task */
@@ -25,8 +25,13 @@ use kartik\datetime\DateTimePicker;
         'type' => \kartik\datecontrol\Module::FORMAT_DATETIME,
     ]) ?>
 
+    <?php if(Yii::$app->taskService->isComplete($model)){?>
+    <?= $form->field($model, 'rating')->widget(StarRating::classname(), [
+    'pluginOptions' => ['size'=>'lg', 'step' => 1]
+    ]);?>
+    <?php } else {?>
     <?= $form->field($model, 'project_id')->dropDownList($projects)->label('Проект') ?>
-
+    <?php }?>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>

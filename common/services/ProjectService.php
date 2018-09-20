@@ -40,4 +40,9 @@ class ProjectService extends Component
         return in_array($role, $this->getRoles($project, $user));
     }
 
+    public function hasRolesAllProject(User $user, $role)
+    {
+        return in_array($role, ProjectUser::find()->byUser($user->id, $role)->select('role')->column());
+    }
+
 }

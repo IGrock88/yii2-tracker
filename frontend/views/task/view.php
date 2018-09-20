@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use kartik\rating\StarRating;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Task */
@@ -43,6 +44,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'executor.name',
                 'value' => Html::a($model->executor->username, ['user/view', 'id' => $model->executor->id]),
                 'format' => 'html'
+            ],
+            [
+                'attribute' => 'rating',
+                'value' => StarRating::widget([
+                        'name' => 'task-rating',
+                        'value' => $model->rating,
+                        'pluginOptions' => [
+                            'readonly' => true,
+                            'showClear' => false,
+                            'showCaption' => false,
+                        ],
+                    ]),
+                'format' => 'raw'
+
             ],
             'started_at:datetime',
             'completed_at:datetime',
