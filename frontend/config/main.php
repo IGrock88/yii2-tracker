@@ -39,7 +39,8 @@ return [
                     'controller' => ['api/user', 'api/project'],
                 ],
                 '<controller:[\w-]+>/<id:\d+>' => '<controller>/view',
-                '<controller:(user|project|task)>s' => '<controller>/index'
+                '<controller:(user|project|task)>s' => '<controller>/index',
+                'profile' => 'user/profile'
             ],
         ],
     ],

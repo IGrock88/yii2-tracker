@@ -68,6 +68,20 @@ class UserController extends Controller
     }
 
     /**
+     * Displays the current user profile.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionProfile()
+    {
+        return $this->render('view', [
+            'model' => $this->findModel(Yii::$app->user->id),
+        ]);
+    }
+
+
+    /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id

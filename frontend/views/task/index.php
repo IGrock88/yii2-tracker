@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             [
                 'attribute' => 'title',
-                'value' => function(\common\models\Task $model){
+                'value' => function (\common\models\Task $model) {
                     return Html::a($model->title, ['view', 'id' => $model->id]);
                 },
                 'format' => 'html'
@@ -61,6 +61,25 @@ $this->params['breadcrumbs'][] = $this->title;
             'updated_at:datetime',
 
             ['class' => 'yii\grid\ActionColumn',
+                'template' => '{takeTask}{completeTask}{update}{delete}',
+                'buttons' => [
+                    'takeTask' => function ($url, \common\models\Task $model, $key) {
+                        return Html::a(\yii\bootstrap\Html::icon('hand-down'), ['take', 'id' => $model->id],[
+                            'data' => [
+                                'confirm' => 'Действительно хотите взять задачу?',
+                                'method' => 'post',
+                            ],
+                        ]);
+                    },
+                    'completeTask' => function($url, \common\models\Task $model, $key){
+                        return Html::a(\yii\bootstrap\Html::icon('saved'), ['complete', 'id' => $model->id],[
+                            'data' => [
+                                'confirm' => 'Завершить задачу?',
+                                'method' => 'post',
+                            ],
+                        ]);
+                    }
+                ],
                 'visibleButtons' => [
                     'update' => function (\common\models\Task $model) {
                         return Yii::$app->taskService
@@ -74,7 +93,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 \Yii::$app->user->identity,
                                 \common\models\ProjectUser::ROLE_MANAGER);
                     },
-                    'view' => false
+                    'takeTask' => function (\common\models\Task $model) {
+                        return Yii::$app->taskService->canTake($model, Yii::$app->user->identity);
+                    },
+                    'completeTask' => function(\common\models\Task $model){
+                        return Yii::$app->taskService->canComplete($model, Yii::$app->user->identity);
+                    }
+
                 ]],
         ],
     ]); ?>

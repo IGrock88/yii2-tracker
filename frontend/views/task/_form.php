@@ -18,7 +18,7 @@ use kartik\datetime\DateTimePicker;
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-<!--    https://github.com/kartik-v/yii2-widget-datepicker-->
+<!--    http://demos.krajee.com/datecontrol-->
     <?= $form->field($model, 'estimation')->textInput()->widget(\kartik\datecontrol\DateControl::class, [
         'options' => ['placeholder' => 'Сделать до'],
         'convertFormat' => true,

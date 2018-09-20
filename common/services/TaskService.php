@@ -28,7 +28,7 @@ class TaskService
         $isDeveloper = Yii::$app->projectService
             ->hasRole($task->project, $user, ProjectUser::ROLE_DEVELOPER);
 
-        return empty($task->executor_id) && $isDeveloper;
+        return $isDeveloper && empty($task->executor_id);
     }
 
     public function canComplete(Task $task, User $user)
@@ -38,8 +38,11 @@ class TaskService
 
     public function takeTask(Task $task, User $user)
     {
-        $task->started_at = Yii::$app->formatter->asTimestamp(date('Y-d-m h:i:s'));
-        $task->executor_id = $user->id;
+        if ($this->canTake($task, $user)){
+            $task->started_at = Yii::$app->formatter->asTimestamp(date('Y-d-m h:i:s'));
+            $task->executor_id = $user->id;
+
+        }
         return $task;
     }
 
