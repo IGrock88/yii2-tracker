@@ -24,8 +24,8 @@ use yii\behaviors\TimestampBehavior;
  * @property int $rating
  *
  * @property User $executor
- * @property User $createdBy
- * @property User $updatedBy
+ * @property User $creator
+ * @property User $updater
  *
  * @property Project $project
  */
@@ -103,7 +103,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
+    public function getCreator()
     {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
@@ -111,7 +111,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
+    public function getUpdater()
     {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }
