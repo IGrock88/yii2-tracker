@@ -19,7 +19,7 @@ class m180827_011152_create_task extends Migration
             'id' => $this->primaryKey(),
             'title' => $this->string(255)->notNull(),
             'description' => $this->text()->notNull(),
-            'estimation' => $this->integer()->notNull(),
+            'estimation' => $this->timestamp()->notNull(),
             'executor_id' => $this->integer(),
             'started_at' => $this->integer(),
             'completed_at' => $this->integer(),

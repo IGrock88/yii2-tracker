@@ -21,16 +21,18 @@ use yii\behaviors\TimestampBehavior;
  * @property int $updated_by
  * @property int $created_at
  * @property int $updated_at
+ * @property int $rating
  *
  * @property User $executor
- * @property User $createdBy
- * @property User $updatedBy
+ * @property User $creator
+ * @property User $updater
  *
  * @property Project $project
  */
 class Task extends \yii\db\ActiveRecord
 {
 
+    const SCENARIO_UPDATE = 'task_update';
     const RELATION_PROJECT = 'project';
     /**
      * {@inheritdoc}
@@ -47,7 +49,8 @@ class Task extends \yii\db\ActiveRecord
     {
         return [
             TimestampBehavior::className(),
-            BlameableBehavior::className()
+            BlameableBehavior::className(),
+
         ];
     }
     /**
@@ -56,9 +59,10 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'estimation', 'created_by', 'created_at'], 'required'],
+            [['title', 'description', 'estimation','project'], 'required'],
             [['description'], 'string'],
-            [['estimation', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at', 'project_id'], 'integer'],
+            [['created_at', 'updated_at', 'project_id'], 'integer'],
+            [['rating'], 'integer', 'min' => 1, 'max' => 5, 'on' => self::SCENARIO_UPDATE],
             [['title'], 'string', 'max' => 255],
             [['executor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['executor_id' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
@@ -66,23 +70,25 @@ class Task extends \yii\db\ActiveRecord
         ];
     }
 
+
     /**
      * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'estimation' => 'Estimation',
+            'id' => 'ID задачи',
+            'title' => 'Название задачи',
+            'description' => 'Описание задачи',
+            'estimation' => 'Сделать до',
             'executor_id' => 'Executor ID',
-            'started_at' => 'Started At',
-            'completed_at' => 'Completed At',
-            'created_by' => 'Created By',
-            'updated_by' => 'Updated By',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'started_at' => 'Начало выполнения',
+            'completed_at' => 'Время завершения',
+            'created_by' => 'Кем создан',
+            'updated_by' => 'Кем изменен',
+            'created_at' => 'Время создания',
+            'updated_at' => 'Время изменения',
+            'rating' => 'Оценка задачи'
         ];
     }
 
@@ -97,7 +103,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
+    public function getCreator()
     {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
@@ -105,7 +111,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
+    public function getUpdater()
     {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }

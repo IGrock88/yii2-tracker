@@ -2,10 +2,12 @@
 
 namespace backend\controllers;
 
+use common\models\query\ProjectQuery;
 use common\models\search\ProjectSearch;
 use common\models\User;
 use Yii;
 use common\models\Project;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -21,6 +23,15 @@ class ProjectController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -87,7 +98,15 @@ class ProjectController extends Controller
     {
         $model = $this->findModel($id);
 
+        $currentProjectUsers = $model->getUsersByRoles();
+
         if ($this->loadModel($model) && $model->save()) {
+            if($changedRoles = array_diff_assoc($model->getUsersByRoles(), $currentProjectUsers)){
+                foreach ($changedRoles as $userId => $role){
+                    Yii::$app->projectService->assignRole($model, User::findOne($userId), $role);
+
+                }
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

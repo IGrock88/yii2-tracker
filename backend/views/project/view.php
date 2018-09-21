@@ -12,8 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="project-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -31,11 +29,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description:ntext',
+
             ['attribute' => 'active',
-                'value' => \common\models\Project::STATUS_TEXT[$model->active]
+                'value' => \common\models\Project::STATUS_TEXT[$model->active],
+                'label' => 'Статус'
             ],
-            'creator.username',
-            'updater.username',
+             [
+                 'attribute' => 'creator.username',
+                 'label' => 'Имя создателя',
+                 'value' => Html::a($model->creator->username, ['user/view', 'id' => $model->creator->id]),
+                 'format' => 'html'
+            ],
+            [
+                'attribute' => 'updater.username',
+                'label' => 'Кто обновил',
+                'value' => Html::a($model->updater->username, ['user/view', 'id' => $model->updater->id]),
+                'format' => 'html'
+            ],
             'created_at:datetime',
             'updated_at:datetime',
         ],

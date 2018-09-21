@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii2mod\comments\widgets\Comment;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -41,6 +42,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_at:datetime',
             'updated_at:datetime',
         ],
-    ]) ?>
+    ]);?>
+
+
+    <?php echo Comment::widget([
+        'model' => $model,
+    ]); ?>
 
 </div>

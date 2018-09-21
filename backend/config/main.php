@@ -26,31 +26,15 @@ return [
             // this is the name of the session cookie used for login on the backend
             'name' => 'advanced-backend',
         ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
-        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-//        'assetManager' => [
-//            'bundles' => [
-//                'dmstr\web\AdminLteAsset' => [
-//                    'skin' => 'skin-red',
-//                ],
-//            ],
-//        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '<c:[\w-]+>/<id:\d+>' => '<c>/view',
-                '<c:>s' => '<c>/index'
+                '<controller:[\w-]+>/<id:\d+>' => '<controller>/view',
+                '<controller:(user|project|task)>s' => '<controller>/index'
             ],
         ],
 

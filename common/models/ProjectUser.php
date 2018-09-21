@@ -57,7 +57,7 @@ class ProjectUser extends \yii\db\ActiveRecord
             'id' => 'ID',
             'project_id' => 'Project ID',
             'user_id' => 'User ID',
-            'role' => 'Role',
+            'role' => 'Роли',
         ];
     }
 

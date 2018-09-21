@@ -27,15 +27,6 @@ return [
             // this is the name of the session cookie used for login on the frontend
             'name' => 'advanced-frontend',
         ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
-        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
@@ -48,10 +39,15 @@ return [
                     'controller' => ['api/user', 'api/project']
                 ],
                 '<controller:[\w-]+>/<id:\d+>' => '<controller>/view',
-                '<controller:>s' => '<controller>/index'
+                '<controller:(user|project|task)>s' => '<controller>/index',
+                'profile' => 'user/profile'
             ],
         ],
-
+    ],
+    'modules' => [
+        'api' => [
+            'class' => 'frontend\modules\api\Module',
+        ],
     ],
     'params' => $params,
 ];

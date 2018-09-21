@@ -18,12 +18,15 @@ dmstr\web\AdminLteAsset::register($this);
     <?php $this->head() ?>
 </head>
 <body class="login-page">
-
+<div class="row container">
+    <div class="col-lg-12">
 <?php $this->beginBody() ?>
 
     <?= $content ?>
 
 <?php $this->endBody() ?>
+    </div>
+</div>
 </body>
 </html>
 <?php $this->endPage() ?>
