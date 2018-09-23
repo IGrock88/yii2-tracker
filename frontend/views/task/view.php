@@ -95,7 +95,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'showCaption' => false,
                     ],
                 ]),
-                'format' => 'raw'
+                'format' => 'raw',
+                'label' => 'Оценка менеджера проекта'
 
             ],
             'started_at:datetime',

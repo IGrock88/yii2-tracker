@@ -91,7 +91,7 @@ class ProjectService extends Component
      * @param $role
      * @return array
      */
-    public function getActiveUsersByRole(User $currentUser, $role)
+    public function getProjectsActiveUsersByRole(User $currentUser, $role)
     {
         $projects = Project::find()->byUser($currentUser->id)->all();
         $users = User::find()->onlyActive()->all();
