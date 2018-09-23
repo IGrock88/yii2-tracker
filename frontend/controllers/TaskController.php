@@ -5,11 +5,13 @@ namespace frontend\controllers;
 use common\models\Project;
 use common\models\ProjectUser;
 use common\models\query\TaskQuery;
+use common\models\User;
 use Yii;
 use common\models\Task;
 use common\models\search\TaskSearch;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -18,6 +20,8 @@ use yii\filters\VerbFilter;
  */
 class TaskController extends Controller
 {
+
+    const ASSES_DENIED_MESSAGE = 'Доступ запрещён, обратитесь к администратору';
     /**
      * {@inheritdoc}
      */
@@ -28,10 +32,60 @@ class TaskController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
+                        'actions' => ['index', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
+                        'matchCallback' => function($rules, $action){
+                            $userRoles = Yii::$app->projectService->getAllUserRoles(Yii::$app->user->identity);
+                            if ($userRoles){
+                                return true;
+                            }
+                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                        }
+                    ],
+                    [
+                        'actions' => ['update', 'redo', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rules, $action){
+                            $project = Task::findOne(Yii::$app->request->get('id'))->project;
+                            $user = Yii::$app->user->identity;
+                            $hasRole = Yii::$app->projectService->hasRole($project, $user, ProjectUser::ROLE_MANAGER);
+                            if ($hasRole){
+                                return true;
+                            }
+                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                        }
+                    ],
+                    [
+                        'actions' => ['create'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rules, $action){
+                            $user = Yii::$app->user->identity;
+                            $hasRole = Yii::$app->projectService->hasRolesAllProject($user, ProjectUser::ROLE_MANAGER);
+                            if ($hasRole){
+                                return true;
+                            }
+                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                        }
+                    ],
+                    [
+                        'actions' => ['take', 'complete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rules, $action){
+                            $project = Task::findOne(Yii::$app->request->get('id'))->project;
+                            $user = Yii::$app->user->identity;
+                            $hasRole = Yii::$app->projectService->hasRole($project, $user, ProjectUser::ROLE_DEVELOPER);
+                            if ($hasRole){
+                                return true;
+                            }
+                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                        }
                     ],
                 ],
+
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),

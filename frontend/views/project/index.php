@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\ProjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -31,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'active',
                 'filter' => \common\models\Project::STATUS_TEXT,
-                'value' => function(\common\models\Project $model){
+                'value' => function (\common\models\Project $model) {
                     return \common\models\Project::STATUS_TEXT[$model->active];
                 }
             ],
@@ -63,7 +64,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_at:datetime',
             'updated_at:datetime',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view}{update}',
+                'visibleButtons' => [
+                    'update' => function (\common\models\Project $model) {
+                        return Yii::$app->projectService->canManage($model, Yii::$app->user->identity);
+                    },
+                ]
+
+
+            ],
         ],
     ]); ?>
     <?php Pjax::end(); ?>

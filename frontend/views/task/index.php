@@ -96,13 +96,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'visibleButtons' => [
                     'update' => function (\common\models\Task $model) {
-                        return Yii::$app->taskService
+                        return Yii::$app->projectService
                             ->canManage($model->project,
                                 Yii::$app->user->identity,
                                 \common\models\ProjectUser::ROLE_MANAGER);
                     },
                     'delete' => function (\common\models\Task $model) {
-                        return Yii::$app->taskService
+                        return Yii::$app->projectService
                             ->canManage($model->project,
                                 Yii::$app->user->identity,
                                 \common\models\ProjectUser::ROLE_MANAGER);
@@ -115,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'redoTask' => function(\common\models\Task $model){
 
-                        return Yii::$app->taskService->canManage($model->project, Yii::$app->user->identity) &&
+                        return Yii::$app->projectService->canManage($model->project, Yii::$app->user->identity) &&
                             Yii::$app->taskService->isComplete($model);
                     }
 

@@ -35,6 +35,11 @@ class ProjectService extends Component
         return $project->getProjectUsers()->byUser($user->id)->select('role')->column();
     }
 
+    public function getAllUserRoles(User $user)
+    {
+        return ProjectUser::find()->byUser($user->id)->select('role')->column();
+    }
+
     public function hasRole(Project $project, User $user, $role)
     {
         return in_array($role, $this->getRoles($project, $user));
@@ -43,6 +48,11 @@ class ProjectService extends Component
     public function hasRolesAllProject(User $user, $role)
     {
         return in_array($role, ProjectUser::find()->byUser($user->id, $role)->select('role')->column());
+    }
+
+    public function canManage(Project $project, User $user)
+    {
+        return $this->hasRole($project, $user, ProjectUser::ROLE_MANAGER);
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\ProjectUser;
 use common\models\query\ProjectQuery;
 use Yii;
 use common\models\Project;
@@ -9,6 +10,7 @@ use common\models\search\ProjectSearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -27,8 +29,31 @@ class ProjectController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
+                        'actions' => ['index', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
+                        'matchCallback' => function($rules, $action){
+                            $userRoles = Yii::$app->projectService->getAllUserRoles(Yii::$app->user->identity);
+                            if ($userRoles){
+                                return true;
+                            }
+                            throw new ForbiddenHttpException('Доступ запрещён, обратитесь к администратору');
+                        }
+                    ],
+                    [
+                        'actions' => ['update'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rules, $action){
+                            $project = Project::findOne(Yii::$app->request->get('id'));
+                            $user = Yii::$app->user->identity;
+
+                            $hasRole = Yii::$app->projectService->hasRole($project, $user, ProjectUser::ROLE_MANAGER);
+                            if ($hasRole){
+                                return true;
+                            }
+                            throw new ForbiddenHttpException('Доступ запрещён, обратитесь к администратору');
+                        }
                     ],
                 ],
             ],

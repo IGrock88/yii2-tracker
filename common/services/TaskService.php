@@ -18,11 +18,6 @@ use Yii;
 class TaskService
 {
 
-    public function canManage(Project $project, User $user)
-    {
-        return Yii::$app->projectService->hasRole($project, $user, ProjectUser::ROLE_MANAGER);
-    }
-
     public function canTake(Task $task, User $user)
     {
         $isDeveloper = Yii::$app->projectService

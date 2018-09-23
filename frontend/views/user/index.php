@@ -23,7 +23,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'username',
+            [
+                    'attribute' => 'username',
+                'value' => function(\common\models\User $model){
+                    return Html::a($model->username, ['user/view', 'id' => $model->id]);
+                },
+                'format' => 'html'
+
+            ],
             [
                 'attribute' => 'status',
                 'filter' => \common\models\User::STATUS_TEXT,
