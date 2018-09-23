@@ -24,6 +24,7 @@ use yii\web\Linkable;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property Project[] projects
  *
  * @mixin UploadImageBehavior
  */
@@ -53,6 +54,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     const AVATAR_IMG_DIR = '/upload/avatar/';
 
+    const RELATION_PROJECTS = 'projects';
 
     /**
      * {@inheritdoc}

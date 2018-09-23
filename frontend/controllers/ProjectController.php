@@ -19,6 +19,9 @@ use yii\filters\VerbFilter;
  */
 class ProjectController extends Controller
 {
+
+    const ASSES_DENIED_MESSAGE = 'Доступ запрещён, обратитесь к администратору';
+
     /**
      * {@inheritdoc}
      */
@@ -32,28 +35,32 @@ class ProjectController extends Controller
                         'actions' => ['index', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function($rules, $action){
+                        'matchCallback' => function ($rules, $action) {
                             $userRoles = Yii::$app->projectService->getAllUserRoles(Yii::$app->user->identity);
-                            if ($userRoles){
+                            if ($userRoles) {
                                 return true;
                             }
-                            throw new ForbiddenHttpException('Доступ запрещён, обратитесь к администратору');
+                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
                         }
                     ],
                     [
-                        'actions' => ['update'],
+                        'actions' => ['update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function($rules, $action){
+                        'matchCallback' => function ($rules, $action) {
                             $project = Project::findOne(Yii::$app->request->get('id'));
                             $user = Yii::$app->user->identity;
 
                             $hasRole = Yii::$app->projectService->hasRole($project, $user, ProjectUser::ROLE_MANAGER);
-                            if ($hasRole){
+                            if ($hasRole) {
                                 return true;
                             }
-                            throw new ForbiddenHttpException('Доступ запрещён, обратитесь к администратору');
+                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
                         }
+                    ],
+                    [
+                        'actions' => ['create'],
+                        'allow' => false
                     ],
                 ],
             ],
@@ -76,7 +83,7 @@ class ProjectController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $query = $dataProvider->query;
-        /**@var  $query  ProjectQuery      */
+        /**@var  $query  ProjectQuery */
         $query->byUser(Yii::$app->user->id);
 
 

@@ -19,7 +19,7 @@ class TaskSearch extends Task
     {
         return [
             [['id', 'estimation', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
-            [['title', 'description', 'project_id'], 'safe'],
+            [['title', 'description', 'project_id', 'creator', 'executor', 'creator'], 'safe'],
         ];
     }
 

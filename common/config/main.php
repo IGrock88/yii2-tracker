@@ -6,7 +6,7 @@ use kartik\datecontrol\Module;
 return [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'language' => 'ru-RU',
@@ -60,7 +60,7 @@ return [
             'class' => 'yii2mod\comments\Module',
         ],
         //документация http://demos.krajee.com/datecontrol
-        'datecontrol' =>  [
+        'datecontrol' => [
             'class' => '\kartik\datecontrol\Module',
             'displaySettings' => [
                 Module::FORMAT_DATETIME => 'dd-MM-yyyy HH:mm:ss',

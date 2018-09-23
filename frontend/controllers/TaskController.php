@@ -9,6 +9,7 @@ use common\models\User;
 use Yii;
 use common\models\Task;
 use common\models\search\TaskSearch;
+use yii\base\Theme;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -22,6 +23,7 @@ class TaskController extends Controller
 {
 
     const ASSES_DENIED_MESSAGE = 'Доступ запрещён, обратитесь к администратору';
+
     /**
      * {@inheritdoc}
      */
@@ -35,9 +37,9 @@ class TaskController extends Controller
                         'actions' => ['index', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function($rules, $action){
+                        'matchCallback' => function ($rules, $action) {
                             $userRoles = Yii::$app->projectService->getAllUserRoles(Yii::$app->user->identity);
-                            if ($userRoles){
+                            if ($userRoles) {
                                 return true;
                             }
                             throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
@@ -47,11 +49,11 @@ class TaskController extends Controller
                         'actions' => ['update', 'redo', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function($rules, $action){
+                        'matchCallback' => function ($rules, $action) {
                             $project = Task::findOne(Yii::$app->request->get('id'))->project;
                             $user = Yii::$app->user->identity;
                             $hasRole = Yii::$app->projectService->hasRole($project, $user, ProjectUser::ROLE_MANAGER);
-                            if ($hasRole){
+                            if ($hasRole) {
                                 return true;
                             }
                             throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
@@ -61,10 +63,10 @@ class TaskController extends Controller
                         'actions' => ['create'],
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function($rules, $action){
+                        'matchCallback' => function ($rules, $action) {
                             $user = Yii::$app->user->identity;
                             $hasRole = Yii::$app->projectService->hasRolesAllProject($user, ProjectUser::ROLE_MANAGER);
-                            if ($hasRole){
+                            if ($hasRole) {
                                 return true;
                             }
                             throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
@@ -74,11 +76,11 @@ class TaskController extends Controller
                         'actions' => ['take', 'complete'],
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function($rules, $action){
+                        'matchCallback' => function ($rules, $action) {
                             $project = Task::findOne(Yii::$app->request->get('id'))->project;
                             $user = Yii::$app->user->identity;
                             $hasRole = Yii::$app->projectService->hasRole($project, $user, ProjectUser::ROLE_DEVELOPER);
-                            if ($hasRole){
+                            if ($hasRole) {
                                 return true;
                             }
                             throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
@@ -106,15 +108,20 @@ class TaskController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $query = $dataProvider->query;
-        /**@var  $query  TaskQuery      */
+        /**@var  $query  TaskQuery */
         $query->byUser(Yii::$app->user->id);
 
         $userProjects = Project::find()->byUser(Yii::$app->user->id)->select('title')->indexBy('id')->column();
+
+        $projectDevelopers = Yii::$app->projectService->getActiveUsersByRole(ProjectUser::ROLE_DEVELOPER);
+        $projectManagers = Yii::$app->projectService->getActiveUsersByRole(ProjectUser::ROLE_MANAGER);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'userProjects' => $userProjects,
+            'projectManagers' => $projectManagers,
+            'projectDevelopers' => $projectDevelopers,
         ]);
     }
 
@@ -134,11 +141,16 @@ class TaskController extends Controller
     public function actionRedo($id)
     {
         $model = $this->findModel($id);
-        $model->completed_at = null;
 
-        if ($model->save()){
+        if (!Yii::$app->taskService->isComplete($model)) {
+            Yii::$app->session->setFlash('danger', 'Задача ' . $id . ' ещё не выполнена');
+            return $this->redirect('index');
+        }
+
+        $model->completed_at = null;
+        if ($model->save()) {
             Yii::$app->session->setFlash('success', 'Задача отправлена на доработку');
-            $this->redirect('index');
+            return $this->redirect('index');
         }
     }
 
@@ -215,11 +227,17 @@ class TaskController extends Controller
     public function actionTake($id)
     {
         $taskModel = $this->findModel($id);
-        $userModel = Yii::$app->user->identity;
+        $currentUser = Yii::$app->user->identity;
 
-        Yii::$app->taskService->takeTask($taskModel, $userModel);
+        if (!Yii::$app->taskService->canTake($taskModel, $currentUser)) {
+            Yii::$app->session
+                ->setFlash('danger', 'Задача c id ' . $id . ' уже взята в работу либо у вас остутствует доступ');
+            return $this->redirect(['index']);
+        }
 
-        if ($taskModel->save()){
+        Yii::$app->taskService->takeTask($taskModel, $currentUser);
+
+        if ($taskModel->save()) {
             $estimationDate = Yii::$app->formatter->asDatetime($taskModel->estimation);
             Yii::$app->session
                 ->setFlash('success',
@@ -240,11 +258,17 @@ class TaskController extends Controller
     public function actionComplete($id)
     {
         $taskModel = $this->findModel($id);
-        $userModel = Yii::$app->user->identity;
+        $currentUser = Yii::$app->user->identity;
 
-        Yii::$app->taskService->completeTask($taskModel, $userModel);
+        if (!Yii::$app->taskService->canComplete($taskModel, $currentUser)) {
+            Yii::$app->session
+                ->setFlash('danger', 'Задача c id ' . $id . ' уже выполнена либо у вас остутствует доступ');
+            return $this->redirect(['index']);
+        }
 
-        if ($taskModel->save()){
+        Yii::$app->taskService->completeTask($taskModel, $currentUser);
+
+        if ($taskModel->save()) {
             Yii::$app->session
                 ->setFlash('success',
                     'Задача помечена как выполненная');

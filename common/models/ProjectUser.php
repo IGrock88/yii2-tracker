@@ -14,6 +14,7 @@ use Yii;
  *
  * @property Project $project
  * @property User $user
+ * @property User[] $users
  */
 class ProjectUser extends \yii\db\ActiveRecord
 {
@@ -75,6 +76,14 @@ class ProjectUser extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsers()
+    {
+        return $this->hasMany(User::class, ['id' => 'user_id']);
     }
 
     /**

@@ -15,18 +15,57 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php if (Yii::$app->projectService->canManage($model->project, \Yii::$app->user->identity,
-     \common\models\ProjectUser::ROLE_MANAGER)){?>
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-    <?php }?>
+        \common\models\ProjectUser::ROLE_MANAGER)) { ?>
+        <p>
+            <?php if (Yii::$app->taskService->isComplete($model)) { ?>
+                <?= Html::a('Redo', ['redo', 'id' => $model->id],
+                    [
+                        'class' => 'btn btn-danger',
+                        'data' => [
+                            'confirm' => 'Отправить задачу на доработку?',
+                            'method' => 'post',
+                        ]
+                    ]) ?>
+            <?php } ?>
+            <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                'class' => 'btn btn-danger',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ],
+            ]) ?>
+
+        </p>
+    <?php } ?>
+
+    <?php if (Yii::$app->taskService->canTake($model, \Yii::$app->user->identity,
+        \common\models\ProjectUser::ROLE_DEVELOPER)) { ?>
+        <p>
+            <?= Html::a('Take', ['take', 'id' => $model->id],
+                [
+                    'class' => 'btn btn-primary',
+                    'data' => [
+                        'confirm' => 'Действительно хотите взять задачу?',
+                        'method' => 'post',
+                    ]
+                ]) ?>
+        </p>
+    <?php } ?>
+
+    <?php if (Yii::$app->taskService->canComplete($model, \Yii::$app->user->identity,
+        \common\models\ProjectUser::ROLE_DEVELOPER)) { ?>
+        <p>
+            <?= Html::a('Complete', ['complete', 'id' => $model->id],
+                [
+                    'class' => 'btn btn-success',
+                    'data' => [
+                        'confirm' => 'Действительно хотите завершить задачу?',
+                        'method' => 'post',
+                    ]
+                ]) ?>
+        </p>
+    <?php } ?>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -48,14 +87,14 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'rating',
                 'value' => StarRating::widget([
-                        'name' => 'task-rating',
-                        'value' => $model->rating,
-                        'pluginOptions' => [
-                            'readonly' => true,
-                            'showClear' => false,
-                            'showCaption' => false,
-                        ],
-                    ]),
+                    'name' => 'task-rating',
+                    'value' => $model->rating,
+                    'pluginOptions' => [
+                        'readonly' => true,
+                        'showClear' => false,
+                        'showCaption' => false,
+                    ],
+                ]),
                 'format' => 'raw'
 
             ],
