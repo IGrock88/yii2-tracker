@@ -113,8 +113,9 @@ class TaskController extends Controller
 
         $userProjects = Project::find()->byUser(Yii::$app->user->id)->select('title')->indexBy('id')->column();
 
-        $projectDevelopers = Yii::$app->projectService->getActiveUsersByRole(ProjectUser::ROLE_DEVELOPER);
-        $projectManagers = Yii::$app->projectService->getActiveUsersByRole(ProjectUser::ROLE_MANAGER);
+
+        $projectDevelopers = Yii::$app->projectService->getActiveUsersByRole(Yii::$app->user->identity, ProjectUser::ROLE_DEVELOPER);
+        $projectManagers = Yii::$app->projectService->getActiveUsersByRole(Yii::$app->user->identity, ProjectUser::ROLE_MANAGER);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
