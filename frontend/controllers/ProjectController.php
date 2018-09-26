@@ -4,11 +4,13 @@ namespace frontend\controllers;
 
 use common\models\ProjectUser;
 use common\models\query\ProjectQuery;
+use frontend\modules\api\models\User;
 use Yii;
 use common\models\Project;
 use common\models\search\ProjectSearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -62,6 +64,10 @@ class ProjectController extends Controller
                         'actions' => ['create'],
                         'allow' => false
                     ],
+                    [
+                        'actions' => ['chat'],
+                        'allow' => true
+                    ]
                 ],
             ],
             'verbs' => [
@@ -101,9 +107,17 @@ class ProjectController extends Controller
      */
     public function actionView($id)
     {
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+    }
+    
+    public function actionChat($id){
+        $projectToken = Yii::$app->params['projectToken'] . $id;
+        $this->view->registerJsVar('idProject', $projectToken);
+        
+        return $this->render('chat');
     }
 
     /**

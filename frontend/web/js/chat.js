@@ -5,11 +5,12 @@
     var ENTER_KEYCODE = 13;
 
     var webSocketPort = wsPort ? wsPort : DEFAULT_PORT;
+
     var conn = new WebSocket('ws://localhost:' + webSocketPort);
 
     conn.onopen = function(e) {
         console.log("Connection established!");
-        $('#chatArea').val('!!!Вы подключены к чату!!!\n');
+        conn.send(idProject);
     };
     conn.onmessage = function(e) {
         console.log(e);

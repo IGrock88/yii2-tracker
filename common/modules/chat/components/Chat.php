@@ -8,18 +8,22 @@
 namespace common\modules\chat\components;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+use yii\helpers\StringHelper;
 
 class Chat implements MessageComponentInterface {
     protected $clients;
 
     public function __construct() {
-        $this->clients = new \SplObjectStorage;
+        $this->clients = [];
     }
 
     public function onOpen(ConnectionInterface $conn) {
-        // Store the new connection to send messages to later
-        $this->clients->attach($conn);
 
+        $this->clients[$conn->resourceId] = [
+            'conn' => $conn
+        ];
+
+        $conn->send('Вы подключены к чату');
         echo "New connection! ({$conn->resourceId})\n";
     }
 
@@ -28,15 +32,29 @@ class Chat implements MessageComponentInterface {
         echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
             , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
 
+        if (StringHelper::startsWith($msg, \Yii::$app->params['projectToken'])){
+            $idProject = str_replace(\Yii::$app->params['projectToken'], '', $msg);
+            $this->clients[$from->resourceId] = [
+                'idProject' => $idProject,
+                'conn' => $from
+            ];
+            echo sprintf("\n" . '%d is connected to chat project id %d' . "\n"
+                , $from->resourceId, $idProject);
+        }
+        else {
+            $idProject = $this->clients[$from->resourceId]['idProject'];
+            foreach ($this->clients as $client){
+                if ($client['idProject'] == $idProject){
+                    $client['conn']->send($msg);
+                }
+            }
 
-        foreach ($this->clients as $client) {
-                $client->send($msg);
         }
     }
 
     public function onClose(ConnectionInterface $conn) {
         // The connection is closed, remove it, as we can no longer send it messages
-        $this->clients->detach($conn);
+        unset($this->clients[$conn->resourceId]);
 
         echo "Connection {$conn->resourceId} has disconnected\n";
     }
