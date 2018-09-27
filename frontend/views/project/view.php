@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
     <?php }?>
-
+    <?= Html::a('Enter chat', ['chat', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
