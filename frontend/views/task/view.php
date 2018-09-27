@@ -99,8 +99,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'started_at:datetime',
             'completed_at:datetime',
-            'creator.username',
-            'updater.username',
+            [
+                    'attribute' => 'creator.username',
+                'value' => Html::a($model->creator->username, ['user/view', 'id' => $model->creator->id]),
+                'format' => 'html',
+                'label' => 'Создатель задачи'
+            ],
+            [
+                'attribute' => 'updater.username',
+                'value' => Html::a($model->updater->username, ['user/view', 'id' => $model->updater->id]),
+                'format' => 'html',
+                'label' => 'Кто обновлял'
+            ],
             'created_at:datetime',
             'updated_at:datetime',
         ],
