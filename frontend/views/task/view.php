@@ -14,8 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="task-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php if (Yii::$app->projectService->canManage($model->project, \Yii::$app->user->identity,
-        \common\models\ProjectUser::ROLE_MANAGER)) { ?>
+    <?php if (Yii::$app->projectService->canManage($model->project, \Yii::$app->user->identity)) { ?>
         <p>
             <?php if (Yii::$app->taskService->isComplete($model)) { ?>
                 <?= Html::a('Redo', ['redo', 'id' => $model->id],
@@ -39,8 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     <?php } ?>
 
-    <?php if (Yii::$app->taskService->canTake($model, \Yii::$app->user->identity,
-        \common\models\ProjectUser::ROLE_DEVELOPER)) { ?>
+    <?php if (Yii::$app->taskService->canTake($model, \Yii::$app->user->identity)) { ?>
         <p>
             <?= Html::a('Take', ['take', 'id' => $model->id],
                 [

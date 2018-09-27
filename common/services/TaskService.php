@@ -47,7 +47,7 @@ class TaskService
      *
      * @param Task $task
      * @param User $user
-     * @return Task
+     * @return bool
      */
     public function takeTask(Task $task, User $user)
     {
@@ -55,7 +55,7 @@ class TaskService
             $task->started_at = time();
             $task->executor_id = $user->id;
         }
-        return $task;
+        return $task->save();
     }
 
     /**
@@ -63,12 +63,15 @@ class TaskService
      *
      * @param Task $task
      * @param User $user
+     *
+     * @return bool
      */
     public function completeTask(Task $task, User $user)
     {
         if ($this->canComplete($task, $user)) {
             $task->completed_at = time();
         }
+        return $task->save();
     }
 
     /**
@@ -80,6 +83,13 @@ class TaskService
     public function isComplete(Task $task)
     {
         return !empty($task->completed_at) && !empty($task->started_at);
+    }
+
+
+    public function redo(Task $task)
+    {
+        $task->completed_at = null;
+        return $task->save();
     }
 
 }

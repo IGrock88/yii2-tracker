@@ -6,6 +6,7 @@ use common\models\Project;
 use common\models\ProjectUser;
 use common\models\query\TaskQuery;
 use common\models\User;
+use phpDocumentor\Reflection\Types\This;
 use Yii;
 use common\models\Task;
 use common\models\search\TaskSearch;
@@ -22,8 +23,6 @@ use yii\filters\VerbFilter;
 class TaskController extends Controller
 {
 
-    const ASSES_DENIED_MESSAGE = 'Доступ запрещён, обратитесь к администратору';
-
     /**
      * {@inheritdoc}
      */
@@ -34,12 +33,24 @@ class TaskController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'view'],
+                        'actions' => ['index'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rules, $action) {
                             $userRoles = Yii::$app->projectService->getAllUserRoles(Yii::$app->user->identity);
                             if ($userRoles) {
+                                return true;
+                            }
+                            return false;
+                        }
+                    ],
+                    [
+                        'actions' => ['view'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rules, $action) {
+                            $task = $this->findModel(Yii::$app->request->get('id'));
+                            if (Yii::$app->projectService->getRoles($task->project, Yii::$app->user->identity)){
                                 return true;
                             }
                             return false;
@@ -88,7 +99,7 @@ class TaskController extends Controller
                     ],
                 ],
                 'denyCallback' => function(){
-                    throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                    throw new ForbiddenHttpException('Доступ запрещён, обратитесь к администратору');
                 }
 
             ],
@@ -153,11 +164,11 @@ class TaskController extends Controller
             return $this->redirect('index');
         }
 
-        $model->completed_at = null;
-        if ($model->save()) {
+        if (Yii::$app->taskService->redo($model)) {
             Yii::$app->session->setFlash('success', 'Задача отправлена на доработку');
             return $this->redirect('index');
         }
+        return $this->redirect('index');
     }
 
     /**
@@ -241,9 +252,9 @@ class TaskController extends Controller
             return $this->redirect(['index']);
         }
 
-        Yii::$app->taskService->takeTask($taskModel, $currentUser);
 
-        if ($taskModel->save()) {
+
+        if (Yii::$app->taskService->takeTask($taskModel, $currentUser)) {
             $estimationDate = Yii::$app->formatter->asDatetime($taskModel->estimation);
             Yii::$app->session
                 ->setFlash('success',
@@ -272,9 +283,9 @@ class TaskController extends Controller
             return $this->redirect(['index']);
         }
 
-        Yii::$app->taskService->completeTask($taskModel, $currentUser);
 
-        if ($taskModel->save()) {
+
+        if (Yii::$app->taskService->completeTask($taskModel, $currentUser)) {
             Yii::$app->session
                 ->setFlash('success',
                     'Задача помечена как выполненная');

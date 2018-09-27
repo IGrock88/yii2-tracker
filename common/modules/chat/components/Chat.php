@@ -43,11 +43,7 @@ class Chat implements MessageComponentInterface {
         }
         else {
             $idProject = $this->clients[$from->resourceId]['idProject'];
-            foreach ($this->clients as $client){
-                if ($client['idProject'] == $idProject){
-                    $client['conn']->send($msg);
-                }
-            }
+            $this->sendMessageToUserByProject($msg, $idProject);
 
         }
     }
@@ -63,5 +59,14 @@ class Chat implements MessageComponentInterface {
         echo "An error has occurred: {$e->getMessage()}\n";
 
         $conn->close();
+    }
+
+    private function sendMessageToUserByProject($msg, $idProject)
+    {
+        foreach ($this->clients as $client){
+            if ($client['idProject'] == $idProject){
+                $client['conn']->send($msg);
+            }
+        }
     }
 }
