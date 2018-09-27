@@ -126,6 +126,7 @@ class ProjectController extends Controller
     public function actionChat($id){
         $projectToken = Yii::$app->params['projectToken'] . $id;
         $this->view->registerJsVar('idProject', $projectToken);
+        $this->view->registerJsVar('userName', Yii::$app->user->identity->username);
         
         return $this->render('chat', ['model' => $this->findModel($id)]);
     }
