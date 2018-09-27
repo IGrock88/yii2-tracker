@@ -42,7 +42,7 @@ class TaskController extends Controller
                             if ($userRoles) {
                                 return true;
                             }
-                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                            return false;
                         }
                     ],
                     [
@@ -56,7 +56,7 @@ class TaskController extends Controller
                             if ($hasRole) {
                                 return true;
                             }
-                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                            return false;
                         }
                     ],
                     [
@@ -69,7 +69,7 @@ class TaskController extends Controller
                             if ($hasRole) {
                                 return true;
                             }
-                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                            return false;
                         }
                     ],
                     [
@@ -83,10 +83,13 @@ class TaskController extends Controller
                             if ($hasRole) {
                                 return true;
                             }
-                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
-                        }
+                            return false;
+                         }
                     ],
                 ],
+                'denyCallback' => function(){
+                    throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                }
 
             ],
             'verbs' => [
