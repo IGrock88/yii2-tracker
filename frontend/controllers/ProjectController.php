@@ -22,8 +22,6 @@ use yii\filters\VerbFilter;
 class ProjectController extends Controller
 {
 
-    const ASSES_DENIED_MESSAGE = 'Доступ запрещён, обратитесь к администратору';
-
     /**
      * {@inheritdoc}
      */
@@ -34,7 +32,7 @@ class ProjectController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'view'],
+                        'actions' => ['index'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rules, $action) {
@@ -42,7 +40,19 @@ class ProjectController extends Controller
                             if ($userRoles) {
                                 return true;
                             }
-                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                            return false;
+                        }
+                    ],
+                    [
+                        'actions' => ['view', 'chat'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rules, $action) {
+                            $project = $this->findModel(Yii::$app->request->get('id'));
+                            if (Yii::$app->projectService->getRoles($project, Yii::$app->user->identity)){
+                                return true;
+                            }
+                            return false;
                         }
                     ],
                     [
@@ -57,18 +67,18 @@ class ProjectController extends Controller
                             if ($hasRole) {
                                 return true;
                             }
-                            throw new ForbiddenHttpException(self::ASSES_DENIED_MESSAGE);
+                            return false;
                         }
                     ],
                     [
                         'actions' => ['create'],
                         'allow' => false
                     ],
-                    [
-                        'actions' => ['chat'],
-                        'allow' => true
-                    ]
+
                 ],
+                'denyCallback' => function(){
+                    throw new ForbiddenHttpException('Доступ запрещён, обратитесь к администратору');
+                }
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -116,8 +126,9 @@ class ProjectController extends Controller
     public function actionChat($id){
         $projectToken = Yii::$app->params['projectToken'] . $id;
         $this->view->registerJsVar('idProject', $projectToken);
+        $this->view->registerJsVar('userName', Yii::$app->user->identity->username);
         
-        return $this->render('chat');
+        return $this->render('chat', ['model' => $this->findModel($id)]);
     }
 
     /**

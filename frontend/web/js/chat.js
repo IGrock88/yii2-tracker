@@ -35,7 +35,7 @@
     function sendMessage() {
         var messageInput = $('#messageInput');
         if( messageInput.val().length != 0){
-            conn.send(messageInput.val());
+            conn.send(userName + ': ' + messageInput.val());
             messageInput.val('');
         }
     }

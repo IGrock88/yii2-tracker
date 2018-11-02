@@ -28,9 +28,9 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
-        $numRecv = count($this->clients) - 1;
-        echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
-            , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
+//        $numRecv = count($this->clients) - 1;
+//        echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
+//            , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
 
         if (StringHelper::startsWith($msg, \Yii::$app->params['projectToken'])){
             $idProject = str_replace(\Yii::$app->params['projectToken'], '', $msg);
@@ -43,11 +43,7 @@ class Chat implements MessageComponentInterface {
         }
         else {
             $idProject = $this->clients[$from->resourceId]['idProject'];
-            foreach ($this->clients as $client){
-                if ($client['idProject'] == $idProject){
-                    $client['conn']->send($msg);
-                }
-            }
+            $this->sendMessageToUserByProject($msg, $idProject);
 
         }
     }
@@ -63,5 +59,14 @@ class Chat implements MessageComponentInterface {
         echo "An error has occurred: {$e->getMessage()}\n";
 
         $conn->close();
+    }
+
+    private function sendMessageToUserByProject($msg, $idProject)
+    {
+        foreach ($this->clients as $client){
+            if ($client['idProject'] == $idProject){
+                $client['conn']->send($msg);
+            }
+        }
     }
 }

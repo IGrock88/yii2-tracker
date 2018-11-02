@@ -107,14 +107,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'update' => function (\common\models\Task $model) {
                         return Yii::$app->projectService
                             ->canManage($model->project,
-                                Yii::$app->user->identity,
-                                \common\models\ProjectUser::ROLE_MANAGER);
+                                Yii::$app->user->identity);
                     },
                     'delete' => function (\common\models\Task $model) {
                         return Yii::$app->projectService
                             ->canManage($model->project,
-                                Yii::$app->user->identity,
-                                \common\models\ProjectUser::ROLE_MANAGER);
+                                Yii::$app->user->identity);
                     },
                     'takeTask' => function (\common\models\Task $model) {
                         return Yii::$app->taskService->canTake($model, Yii::$app->user->identity);
