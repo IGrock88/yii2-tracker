@@ -29,6 +29,8 @@ class TaskService
         $isDeveloper = Yii::$app->projectService
             ->hasRole($task->project, $user, ProjectUser::ROLE_DEVELOPER);
         return $isDeveloper && empty($task->executor_id);
+
+
     }
 
     /**

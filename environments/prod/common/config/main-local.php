@@ -3,9 +3,9 @@ return [
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=yii2advanced',
-            'username' => 'root',
-            'password' => '',
+            'dsn' => 'mysql:host=eu-cdbr-west-02.cleardb.net;dbname=heroku_69688f022b2f78a',
+            'username' => 'b893eeef7c8a8e',
+            'password' => '84beb004',
             'charset' => 'utf8',
         ],
         'mailer' => [

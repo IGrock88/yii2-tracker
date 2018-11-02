@@ -29,6 +29,8 @@ $currentUser = Yii::$app->user->identity;
 <body>
 <?php $this->beginBody() ?>
 
+
+<?php ?>
 <div class="wrap">
     <?php
     NavBar::begin([
